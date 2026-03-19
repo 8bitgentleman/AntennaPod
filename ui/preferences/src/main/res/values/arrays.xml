@@ -215,12 +215,16 @@
         <item>@string/drawer_feed_order_alphabetical</item>
         <item>@string/drawer_feed_order_last_update</item>
         <item>@string/drawer_feed_order_most_played</item>
+        <item>@string/drawer_feed_order_date_added</item>
+        <item>@string/drawer_feed_order_priority</item>
     </string-array>
     <string-array name="nav_drawer_feed_order_values">
         <item>0</item>
         <item>1</item>
         <item>2</item>
         <item>3</item>
+        <item>4</item>
+        <item>5</item>
     </string-array>
 
     <string-array name="nav_drawer_feed_counter_options">

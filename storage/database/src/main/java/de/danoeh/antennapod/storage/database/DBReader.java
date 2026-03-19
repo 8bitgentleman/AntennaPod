@@ -744,6 +744,19 @@ public final class DBReader {
                     }
                 };
                 break;
+            case DATE_ADDED:
+                comparator = (lhs, rhs) -> Long.compare(rhs.getId(), lhs.getId());
+                break;
+            case PRIORITY:
+                comparator = (lhs, rhs) -> {
+                    int priorityLhs = lhs.getPreferences() != null ? lhs.getPreferences().getFeedPriority() : FeedPreferences.DEFAULT_PRIORITY;
+                    int priorityRhs = rhs.getPreferences() != null ? rhs.getPreferences().getFeedPriority() : FeedPreferences.DEFAULT_PRIORITY;
+                    if (priorityLhs != priorityRhs) {
+                        return Integer.compare(priorityRhs, priorityLhs); // higher priority first
+                    }
+                    return lhs.getTitle().compareToIgnoreCase(rhs.getTitle());
+                };
+                break;
             default:
                 final Map<Long, Long> recentPubDates = adapter.getMostRecentItemDates();
                 comparator = (lhs, rhs) -> {

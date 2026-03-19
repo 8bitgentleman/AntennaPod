@@ -107,6 +107,8 @@ public class FeedPreferences implements Serializable {
         }
     }
 
+    public static final int DEFAULT_PRIORITY = 1;
+
     @NonNull
     private FeedFilter filter;
     private long feedID;
@@ -122,6 +124,7 @@ public class FeedPreferences implements Serializable {
     private int feedSkipEnding;
     private SkipSilence feedSkipSilence;
     private boolean showEpisodeNotification;
+    private int feedPriority;
     private final Set<String> tags = new HashSet<>();
 
     public FeedPreferences(long feedID, AutoDownloadSetting autoDownload, AutoDeleteAction autoDeleteAction,
@@ -129,7 +132,7 @@ public class FeedPreferences implements Serializable {
                            String username, String password) {
         this(feedID, autoDownload, true, autoDeleteAction, volumeAdaptionSetting, username, password,
                 new FeedFilter(), SPEED_USE_GLOBAL, 0, 0, SkipSilence.GLOBAL,
-                false, newEpisodesAction, new HashSet<>());
+                false, newEpisodesAction, DEFAULT_PRIORITY, new HashSet<>());
     }
 
     public FeedPreferences(long feedID, AutoDownloadSetting autoDownload, boolean keepUpdated,
@@ -137,7 +140,7 @@ public class FeedPreferences implements Serializable {
                             String username, String password, @NonNull FeedFilter filter,
                             float feedPlaybackSpeed, int feedSkipIntro, int feedSkipEnding, SkipSilence feedSkipSilence,
                             boolean showEpisodeNotification, NewEpisodesAction newEpisodesAction,
-                            Set<String> tags) {
+                            int feedPriority, Set<String> tags) {
         this.feedID = feedID;
         this.autoDownload = autoDownload;
         this.keepUpdated = keepUpdated;
@@ -152,6 +155,7 @@ public class FeedPreferences implements Serializable {
         this.feedSkipSilence = feedSkipSilence;
         this.showEpisodeNotification = showEpisodeNotification;
         this.newEpisodesAction = newEpisodesAction;
+        this.feedPriority = feedPriority;
         this.tags.addAll(tags);
     }
 
@@ -320,5 +324,13 @@ public class FeedPreferences implements Serializable {
 
     public void setShowEpisodeNotification(boolean showEpisodeNotification) {
         this.showEpisodeNotification = showEpisodeNotification;
+    }
+
+    public int getFeedPriority() {
+        return feedPriority;
+    }
+
+    public void setFeedPriority(int feedPriority) {
+        this.feedPriority = feedPriority;
     }
 }

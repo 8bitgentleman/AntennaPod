@@ -10,6 +10,8 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.text.InputType;
+import android.widget.EditText;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -23,6 +25,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.databinding.PlaybackSpeedFeedSettingDialogBinding;
 import de.danoeh.antennapod.event.MessageEvent;
+import de.danoeh.antennapod.event.UnreadItemsUpdateEvent;
 import de.danoeh.antennapod.event.settings.SkipIntroEndingChangedEvent;
 import de.danoeh.antennapod.event.settings.SpeedPresetChangedEvent;
 import de.danoeh.antennapod.event.settings.VolumeAdaptionChangedEvent;
@@ -62,6 +65,7 @@ public class FeedSettingsPreferenceFragment extends PreferenceFragmentCompat {
     private static final String PREF_NOTIFICATION = "episodeNotification";
     private static final String PREF_RENAME = "rename";
     private static final String PREF_TAGS = "tags";
+    private static final String PREF_FEED_PRIORITY = "feedPriority";
 
     private Feed feed;
     private Disposable disposable;
@@ -269,6 +273,44 @@ public class FeedSettingsPreferenceFragment extends PreferenceFragmentCompat {
             new RenameFeedDialog(getActivity(), feed).show();
             return true;
         });
+        findPreference(PREF_FEED_PRIORITY).setOnPreferenceClickListener(preference -> {
+            showPriorityDialog();
+            return true;
+        });
+        updateFeedPrioritySummary();
+    }
+
+    private void showPriorityDialog() {
+        EditText input = new EditText(getContext());
+        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        input.setText(String.valueOf(feedPreferences.getFeedPriority()));
+        input.setSelection(input.getText().length());
+        new MaterialAlertDialogBuilder(getContext())
+                .setTitle(R.string.feed_priority_dialog_title)
+                .setView(input)
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                    String text = input.getText().toString().trim();
+                    int priority;
+                    try {
+                        priority = Integer.parseInt(text);
+                    } catch (NumberFormatException e) {
+                        priority = FeedPreferences.DEFAULT_PRIORITY;
+                    }
+                    feedPreferences.setFeedPriority(priority);
+                    DBWriter.setFeedPreferences(feedPreferences);
+                    updateFeedPrioritySummary();
+                    EventBus.getDefault().post(new UnreadItemsUpdateEvent());
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    private void updateFeedPrioritySummary() {
+        Preference priorityPreference = findPreference(PREF_FEED_PRIORITY);
+        if (priorityPreference != null) {
+            priorityPreference.setSummary(getString(R.string.feed_priority_summary_current,
+                    feedPreferences.getFeedPriority()));
+        }
     }
 
     private void updateAutoDeleteSummary() {

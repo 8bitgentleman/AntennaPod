@@ -98,6 +98,12 @@
     <string name="drawer_feed_order_alphabetical">Sort alphabetically</string>
     <string name="drawer_feed_order_last_update">Sort by publication date</string>
     <string name="drawer_feed_order_most_played">Sort by number of played episodes</string>
+    <string name="drawer_feed_order_date_added">Sort by date added</string>
+    <string name="drawer_feed_order_priority">Sort by priority</string>
+    <string name="feed_priority_label">Podcast priority</string>
+    <string name="feed_priority_summary">Set a priority number for sorting. Higher number = higher priority (default: 1)</string>
+    <string name="feed_priority_summary_current">Priority: %1$d (higher number = higher priority)</string>
+    <string name="feed_priority_dialog_title">Set podcast priority</string>
     <string name="drawer_feed_counter_inbox">Number of episodes in the inbox</string>
     <string name="drawer_feed_counter_unplayed">Number of unplayed episodes</string>
     <string name="drawer_feed_counter_downloaded">Number of downloaded episodes</string>

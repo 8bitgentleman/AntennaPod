@@ -4,7 +4,9 @@ public enum FeedOrder {
     COUNTER(0),
     ALPHABETICAL(1),
     MOST_PLAYED(3),
-    MOST_RECENT_EPISODE(2);
+    MOST_RECENT_EPISODE(2),
+    DATE_ADDED(4),
+    PRIORITY(5);
 
     public final int id;
 
