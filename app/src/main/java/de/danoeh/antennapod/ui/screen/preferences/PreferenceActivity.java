@@ -32,6 +32,7 @@ public class PreferenceActivity extends ToolbarActivity implements SearchPrefere
     private static final String FRAGMENT_TAG = "tag_preferences";
     public static final String OPEN_AUTO_DOWNLOAD_SETTINGS = "OpenAutoDownloadSettings";
     public static final String OPEN_PLAYBACK_SETTINGS = "OpenPlaybackSettings";
+    public static final String OPEN_INTEGRATIONS_SETTINGS = "OpenIntegrationsSettings";
     private SettingsActivityBinding binding;
 
     @Override
@@ -58,6 +59,9 @@ public class PreferenceActivity extends ToolbarActivity implements SearchPrefere
         if (intent.getBooleanExtra(OPEN_PLAYBACK_SETTINGS, false)) {
             openScreen(R.xml.preferences_playback);
         }
+        if (intent.getBooleanExtra(OPEN_INTEGRATIONS_SETTINGS, false)) {
+            openScreen(R.xml.preferences_integrations);
+        }
     }
 
     private PreferenceFragmentCompat getPreferenceScreen(int screen) {
@@ -81,6 +85,10 @@ public class PreferenceActivity extends ToolbarActivity implements SearchPrefere
             prefFragment = new SwipePreferencesFragment();
         } else if (screen == R.xml.preferences_auto_deletion) {
             prefFragment = new AutomaticDeletionPreferencesFragment();
+        } else if (screen == R.xml.preferences_integrations) {
+            prefFragment = new IntegrationsPreferencesFragment();
+        } else if (screen == R.xml.preferences_transcription) {
+            prefFragment = new TranscriptionPreferencesFragment();
         }
         return prefFragment;
     }
@@ -106,6 +114,10 @@ public class PreferenceActivity extends ToolbarActivity implements SearchPrefere
             return R.string.swipeactions_label;
         } else if (preferences == R.xml.preferences_auto_deletion) {
             return R.string.pref_auto_delete_title;
+        } else if (preferences == R.xml.preferences_integrations) {
+            return R.string.pref_screen_integrations_title;
+        } else if (preferences == R.xml.preferences_transcription) {
+            return R.string.pref_screen_transcription_title;
         }
         return R.string.settings_label;
     }

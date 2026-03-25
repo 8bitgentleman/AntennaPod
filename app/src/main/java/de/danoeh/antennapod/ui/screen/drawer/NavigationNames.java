@@ -10,6 +10,7 @@ import de.danoeh.antennapod.ui.screen.PlaybackHistoryFragment;
 import de.danoeh.antennapod.ui.screen.download.CompletedDownloadsFragment;
 import de.danoeh.antennapod.ui.screen.home.HomeFragment;
 import de.danoeh.antennapod.ui.screen.queue.QueueFragment;
+import de.danoeh.antennapod.feature.highlight.HighlightsFragment;
 import de.danoeh.antennapod.ui.screen.subscriptions.SubscriptionFragment;
 import de.danoeh.antennapod.ui.statistics.StatisticsFragment;
 
@@ -34,6 +35,8 @@ public abstract class NavigationNames {
                 return R.drawable.ic_chart_box;
             case AddFeedFragment.TAG:
                 return R.drawable.ic_add;
+            case HighlightsFragment.TAG:
+                return R.drawable.ic_star;
             default:
                 return 0;
         }
@@ -59,6 +62,8 @@ public abstract class NavigationNames {
                 return R.string.statistics_label;
             case AddFeedFragment.TAG:
                 return R.string.add_feed_label;
+            case HighlightsFragment.TAG:
+                return R.string.highlights_label;
             case NavListAdapter.SUBSCRIPTION_LIST_TAG:
                 return R.string.subscriptions_list_label;
             default:
@@ -86,6 +91,8 @@ public abstract class NavigationNames {
                 return R.string.statistics_label_short;
             case AddFeedFragment.TAG:
                 return R.string.add_feed_label_short;
+            case HighlightsFragment.TAG:
+                return R.string.highlights_label_short;
             case NavListAdapter.SUBSCRIPTION_LIST_TAG:
                 return R.string.subscriptions_list_label;
             default:
@@ -111,6 +118,8 @@ public abstract class NavigationNames {
                 return R.id.bottom_navigation_subscriptions;
             case StatisticsFragment.TAG:
                 return R.id.bottom_navigation_statistics;
+            case HighlightsFragment.TAG:
+                return R.id.bottom_navigation_highlights;
             case HomeFragment.TAG: // fall-through
             default:
                 return R.id.bottom_navigation_home;
@@ -136,6 +145,8 @@ public abstract class NavigationNames {
             return StatisticsFragment.TAG;
         } else if (id == R.id.bottom_navigation_home) {
             return HomeFragment.TAG;
+        } else if (id == R.id.bottom_navigation_highlights) {
+            return HighlightsFragment.TAG;
         }
         return null;
     }

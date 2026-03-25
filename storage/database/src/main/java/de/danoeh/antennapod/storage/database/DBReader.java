@@ -744,6 +744,19 @@ public final class DBReader {
                     }
                 };
                 break;
+            case DATE_ADDED:
+                comparator = (lhs, rhs) -> Long.compare(rhs.getId(), lhs.getId());
+                break;
+            case PRIORITY:
+                comparator = (lhs, rhs) -> {
+                    int priorityLhs = lhs.getPreferences() != null ? lhs.getPreferences().getFeedPriority() : FeedPreferences.DEFAULT_PRIORITY;
+                    int priorityRhs = rhs.getPreferences() != null ? rhs.getPreferences().getFeedPriority() : FeedPreferences.DEFAULT_PRIORITY;
+                    if (priorityLhs != priorityRhs) {
+                        return Integer.compare(priorityRhs, priorityLhs); // higher priority first
+                    }
+                    return lhs.getTitle().compareToIgnoreCase(rhs.getTitle());
+                };
+                break;
             default:
                 final Map<Long, Long> recentPubDates = adapter.getMostRecentItemDates();
                 comparator = (lhs, rhs) -> {
@@ -850,5 +863,53 @@ public final class DBReader {
         } finally {
             adapter.close();
         }
+    }
+
+    public static java.util.List<de.danoeh.antennapod.model.feed.PodcastHighlight> getPodcastHighlights() {
+        PodDBAdapter adapter = PodDBAdapter.getInstance();
+        adapter.open();
+        try (android.database.Cursor cursor = adapter.getPodcastHighlightsCursor()) {
+            java.util.List<de.danoeh.antennapod.model.feed.PodcastHighlight> highlights = new java.util.ArrayList<>(cursor.getCount());
+            while (cursor.moveToNext()) {
+                highlights.add(cursorToPodcastHighlight(cursor));
+            }
+            return highlights;
+        } finally {
+            adapter.close();
+        }
+    }
+
+    public static de.danoeh.antennapod.model.feed.PodcastHighlight getPodcastHighlight(long id) {
+        PodDBAdapter adapter = PodDBAdapter.getInstance();
+        adapter.open();
+        try (android.database.Cursor cursor = adapter.getPodcastHighlightCursor(id)) {
+            if (cursor.moveToFirst()) {
+                return cursorToPodcastHighlight(cursor);
+            }
+            return null;
+        } finally {
+            adapter.close();
+        }
+    }
+
+    private static de.danoeh.antennapod.model.feed.PodcastHighlight cursorToPodcastHighlight(android.database.Cursor cursor) {
+        long feedItemId = cursor.getLong(cursor.getColumnIndexOrThrow(PodDBAdapter.KEY_HIGHLIGHT_FEED_ITEM_ID));
+        String podcastName = cursor.getString(cursor.getColumnIndexOrThrow(PodDBAdapter.KEY_PODCAST_NAME));
+        String episodeTitle = cursor.getString(cursor.getColumnIndexOrThrow(PodDBAdapter.KEY_EPISODE_TITLE));
+        String episodeUrl = cursor.getString(cursor.getColumnIndexOrThrow(PodDBAdapter.KEY_EPISODE_URL));
+        String coverImageUrl = cursor.getString(cursor.getColumnIndexOrThrow(PodDBAdapter.KEY_HIGHLIGHT_IMAGE_URL));
+        String text = cursor.getString(cursor.getColumnIndexOrThrow(PodDBAdapter.KEY_HIGHLIGHT_TEXT));
+        String note = cursor.getString(cursor.getColumnIndexOrThrow(PodDBAdapter.KEY_HIGHLIGHT_NOTE));
+        int positionSec = cursor.getInt(cursor.getColumnIndexOrThrow(PodDBAdapter.KEY_POSITION_SEC));
+        long capturedAt = cursor.getLong(cursor.getColumnIndexOrThrow(PodDBAdapter.KEY_CAPTURED_AT));
+        int syncedReadwise = cursor.getInt(cursor.getColumnIndexOrThrow(PodDBAdapter.KEY_SYNCED_READWISE));
+        int syncedRoamIdx = cursor.getColumnIndex(PodDBAdapter.KEY_SYNCED_ROAM);
+        int syncedRoam = syncedRoamIdx >= 0 ? cursor.getInt(syncedRoamIdx) : 0;
+        de.danoeh.antennapod.model.feed.PodcastHighlight highlight = new de.danoeh.antennapod.model.feed.PodcastHighlight(
+                feedItemId, podcastName, episodeTitle, episodeUrl, coverImageUrl, text, note, positionSec, capturedAt);
+        highlight.setId(cursor.getLong(cursor.getColumnIndexOrThrow(PodDBAdapter.KEY_ID)));
+        highlight.setSyncedReadwise(syncedReadwise);
+        highlight.setSyncedRoam(syncedRoam);
+        return highlight;
     }
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:key="pref_whisper_model"
+        android:title="@string/pref_whisper_model_title"
+        android:entries="@array/whisper_model_entries"
+        android:entryValues="@array/whisper_model_values"
+        android:defaultValue="base" />
+
+    <SeekBarPreference
+        android:key="pref_whisper_lookback"
+        android:title="@string/pref_whisper_lookback_title"
+        android:summary="@string/pref_whisper_lookback_sum"
+        android:min="15"
+        android:max="300"
+        android:defaultValue="60" />
+
+    <Preference
+        android:key="pref_whisper_download_model"
+        android:title="@string/pref_whisper_download_model_title"
+        android:summary="@string/pref_whisper_download_model_sum" />
+
+    <Preference
+        android:key="pref_whisper_delete_model"
+        android:title="@string/pref_whisper_delete_model_title"
+        android:summary="@string/pref_whisper_delete_model_sum" />
+
+</PreferenceScreen>

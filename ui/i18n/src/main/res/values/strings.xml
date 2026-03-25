@@ -98,6 +98,12 @@
     <string name="drawer_feed_order_alphabetical">Sort alphabetically</string>
     <string name="drawer_feed_order_last_update">Sort by publication date</string>
     <string name="drawer_feed_order_most_played">Sort by number of played episodes</string>
+    <string name="drawer_feed_order_date_added">Sort by date added</string>
+    <string name="drawer_feed_order_priority">Sort by priority</string>
+    <string name="feed_priority_label">Podcast priority</string>
+    <string name="feed_priority_summary">Set a priority number for sorting. Higher number = higher priority (default: 1)</string>
+    <string name="feed_priority_summary_current">Priority: %1$d (higher number = higher priority)</string>
+    <string name="feed_priority_dialog_title">Set podcast priority</string>
     <string name="drawer_feed_counter_inbox">Number of episodes in the inbox</string>
     <string name="drawer_feed_counter_unplayed">Number of unplayed episodes</string>
     <string name="drawer_feed_counter_downloaded">Number of downloaded episodes</string>
@@ -1015,4 +1021,27 @@
 
     <string name="echo_share_heading">My favorite podcasts</string>
     <string name="echo_share">My year %d in podcasts. #AntennaPodEcho</string>
+
+    <string name="capture_highlight_label">Capture highlight</string>
+    <string name="pref_screen_integrations_title">Integrations</string>
+    <string name="pref_screen_integrations_sum">Readwise and other integrations</string>
+    <string name="pref_screen_transcription_title">Transcription</string>
+    <string name="pref_screen_transcription_sum">Transcription model and lookback duration</string>
+    <string name="pref_readwise_category_title">Readwise</string>
+    <string name="pref_readwise_token_title">Readwise API token</string>
+    <string name="pref_readwise_token_sum">Token from readwise.io/access_token</string>
+    <string name="pref_readwise_validate_title">Validate token</string>
+    <string name="pref_roam_category_title">Roam Research</string>
+    <string name="pref_roam_graph_title">Graph name</string>
+    <string name="pref_roam_graph_sum">Your Roam graph name</string>
+    <string name="pref_roam_token_title">API token</string>
+    <string name="pref_roam_token_sum">Append-only token from Roam Settings → Graph → API Tokens</string>
+    <string name="pref_whisper_model_title">Transcription model</string>
+    <string name="pref_whisper_lookback_title">Default lookback duration</string>
+    <string name="pref_whisper_lookback_sum">Seconds of audio to capture (15–300)</string>
+    <string name="pref_whisper_download_model_title">Download model</string>
+    <string name="pref_whisper_download_model_sum">Download the selected Moonshine model (Tiny ~50 MB, Base ~200 MB)</string>
+    <string name="pref_whisper_delete_model_title">Delete model</string>
+    <string name="pref_whisper_delete_model_sum">Free storage used by the downloaded model</string>
+    <string name="highlights_screen_label">Highlights</string>
 </resources>

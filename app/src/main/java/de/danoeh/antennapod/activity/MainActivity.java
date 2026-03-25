@@ -58,6 +58,7 @@ import de.danoeh.antennapod.ui.common.IntentUtils;
 import de.danoeh.antennapod.ui.common.NavigationToolbarActivity;
 import de.danoeh.antennapod.ui.common.ThemeSwitcher;
 import de.danoeh.antennapod.ui.common.ThemeUtils;
+import de.danoeh.antennapod.feature.highlight.HighlightsFragment;
 import de.danoeh.antennapod.ui.discovery.DiscoveryFragment;
 import de.danoeh.antennapod.ui.screen.AddFeedFragment;
 import de.danoeh.antennapod.ui.screen.AllEpisodesFragment;
@@ -436,6 +437,9 @@ public class MainActivity extends CastEnabledActivity implements NavigationToolb
                 break;
             case DiscoveryFragment.TAG:
                 fragment = new DiscoveryFragment();
+                break;
+            case HighlightsFragment.TAG:
+                fragment = new HighlightsFragment();
                 break;
             default:
                 // default to home screen

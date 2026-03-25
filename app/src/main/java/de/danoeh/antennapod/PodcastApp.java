@@ -5,6 +5,17 @@ import android.util.Log;
 
 import com.google.android.material.color.DynamicColors;
 
+import androidx.work.Constraints;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+
+import de.danoeh.antennapod.feature.highlight.ReadwisePreferences;
+import de.danoeh.antennapod.feature.highlight.ReadwiseSyncWorker;
+import de.danoeh.antennapod.feature.highlight.RoamPreferences;
+import de.danoeh.antennapod.feature.highlight.WhisperPreferences;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.EventBusException;
 
@@ -15,6 +26,17 @@ public class PodcastApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        ReadwisePreferences.init(this);
+        RoamPreferences.init(this);
+        WhisperPreferences.init(this);
+        WorkManager.getInstance(this).enqueueUniqueWork(
+                "readwise_retry",
+                ExistingWorkPolicy.KEEP,
+                new OneTimeWorkRequest.Builder(ReadwiseSyncWorker.class)
+                        .setConstraints(new Constraints.Builder()
+                                .setRequiredNetworkType(NetworkType.CONNECTED)
+                                .build())
+                        .build());
         Thread.setDefaultUncaughtExceptionHandler(new CrashReportExceptionHandler());
         RxJavaErrorHandlerSetup.setupRxJavaErrorHandler();
 

@@ -11,5 +11,6 @@
         <item>StatisticsFragment</item>
         <item>AddFeedFragment</item>
         <item>SubscriptionList</item>
+        <item>HighlightsFragment</item>
     </string-array>
 </resources>

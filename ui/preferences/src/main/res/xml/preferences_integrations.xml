@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/pref_readwise_category_title">
+
+        <Preference
+            android:key="pref_readwise_token"
+            android:title="@string/pref_readwise_token_title"
+            android:summary="@string/pref_readwise_token_sum" />
+
+        <Preference
+            android:key="pref_readwise_validate"
+            android:title="@string/pref_readwise_validate_title" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_roam_category_title">
+
+        <Preference
+            android:key="pref_roam_graph"
+            android:title="@string/pref_roam_graph_title"
+            android:summary="@string/pref_roam_graph_sum" />
+
+        <Preference
+            android:key="pref_roam_token"
+            android:title="@string/pref_roam_token_title"
+            android:summary="@string/pref_roam_token_sum" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

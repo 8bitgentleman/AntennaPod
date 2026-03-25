@@ -88,6 +88,12 @@
     </item>
 
     <item
+        android:id="@+id/capture_item"
+        android:title="@string/capture_highlight_label"
+        custom:showAsAction="never">
+    </item>
+
+    <item
         android:id="@+id/share_item"
         android:icon="@drawable/ic_share"
         android:menuCategory="container"

@@ -53,7 +53,7 @@ public class PodDBAdapter {
 
     private static final String TAG = "PodDBAdapter";
     public static final String DATABASE_NAME = "Antennapod.db";
-    public static final int VERSION = 3110000;
+    public static final int VERSION = 3140000;
 
     /**
      * Maximum number of arguments for IN-operator.
@@ -126,6 +126,19 @@ public class PodDBAdapter {
     public static final String KEY_STATE = "state";
     public static final String KEY_PODCASTINDEX_TRANSCRIPT_URL = "podcastindex_transcript_url";
     public static final String KEY_PODCASTINDEX_TRANSCRIPT_TYPE = "podcastindex_transcript_type";
+    public static final String TABLE_NAME_PODCAST_HIGHLIGHTS = "PodcastHighlights";
+    public static final String KEY_HIGHLIGHT_FEED_ITEM_ID = "feed_item_id";
+    public static final String KEY_PODCAST_NAME = "podcast_name";
+    public static final String KEY_EPISODE_TITLE = "episode_title";
+    public static final String KEY_EPISODE_URL = "episode_url";
+    public static final String KEY_HIGHLIGHT_IMAGE_URL = "cover_image_url";
+    public static final String KEY_HIGHLIGHT_TEXT = "text";
+    public static final String KEY_HIGHLIGHT_NOTE = "note";
+    public static final String KEY_POSITION_SEC = "position_sec";
+    public static final String KEY_CAPTURED_AT = "captured_at";
+    public static final String KEY_SYNCED_READWISE = "synced_readwise";
+    public static final String KEY_SYNCED_ROAM = "synced_roam";
+    public static final String KEY_FEED_PRIORITY = "feed_priority";
 
     // Table names
     public static final String TABLE_NAME_FEEDS = "Feeds";
@@ -177,7 +190,8 @@ public class PodDBAdapter {
             + KEY_FEED_SKIP_ENDING + " INTEGER DEFAULT 0,"
             + KEY_EPISODE_NOTIFICATION + " INTEGER DEFAULT 0,"
             + KEY_STATE + " INTEGER DEFAULT " + Feed.STATE_SUBSCRIBED + ","
-            + KEY_NEW_EPISODES_ACTION + " INTEGER DEFAULT 0)";
+            + KEY_NEW_EPISODES_ACTION + " INTEGER DEFAULT 0,"
+            + KEY_FEED_PRIORITY + " INTEGER DEFAULT " + FeedPreferences.DEFAULT_PRIORITY + ")";
 
     private static final String CREATE_TABLE_FEED_ITEMS = "CREATE TABLE "
             + TABLE_NAME_FEED_ITEMS + " (" + TABLE_PRIMARY_KEY
@@ -249,6 +263,21 @@ public class PodDBAdapter {
             + TABLE_NAME_FAVORITES + "(" + KEY_ID + " INTEGER PRIMARY KEY,"
             + KEY_FEEDITEM + " INTEGER," + KEY_FEED + " INTEGER)";
 
+    static final String CREATE_TABLE_PODCAST_HIGHLIGHTS = "CREATE TABLE "
+            + TABLE_NAME_PODCAST_HIGHLIGHTS + " ("
+            + TABLE_PRIMARY_KEY
+            + KEY_HIGHLIGHT_FEED_ITEM_ID + " INTEGER NOT NULL,"
+            + KEY_PODCAST_NAME + " TEXT,"
+            + KEY_EPISODE_TITLE + " TEXT,"
+            + KEY_EPISODE_URL + " TEXT,"
+            + KEY_HIGHLIGHT_IMAGE_URL + " TEXT,"
+            + KEY_HIGHLIGHT_TEXT + " TEXT NOT NULL,"
+            + KEY_HIGHLIGHT_NOTE + " TEXT,"
+            + KEY_POSITION_SEC + " INTEGER NOT NULL,"
+            + KEY_CAPTURED_AT + " INTEGER NOT NULL,"
+            + KEY_SYNCED_READWISE + " INTEGER DEFAULT 0,"
+            + KEY_SYNCED_ROAM + " INTEGER DEFAULT 0)";
+
     /**
      * All the tables in the database
      */
@@ -259,7 +288,8 @@ public class PodDBAdapter {
             TABLE_NAME_DOWNLOAD_LOG,
             TABLE_NAME_QUEUE,
             TABLE_NAME_SIMPLECHAPTERS,
-            TABLE_NAME_FAVORITES
+            TABLE_NAME_FAVORITES,
+            TABLE_NAME_PODCAST_HIGHLIGHTS
     };
 
     public static final String SELECT_KEY_ITEM_ID = "item_id";
@@ -336,7 +366,8 @@ public class PodDBAdapter {
             + TABLE_NAME_FEEDS + "." + KEY_FEED_SKIP_ENDING + ", "
             + TABLE_NAME_FEEDS + "." + KEY_EPISODE_NOTIFICATION + ", "
             + TABLE_NAME_FEEDS + "." + KEY_STATE + ", "
-            + TABLE_NAME_FEEDS + "." + KEY_NEW_EPISODES_ACTION;
+            + TABLE_NAME_FEEDS + "." + KEY_NEW_EPISODES_ACTION + ", "
+            + TABLE_NAME_FEEDS + "." + KEY_FEED_PRIORITY;
 
     private static final String JOIN_FEED_ITEM_AND_MEDIA = " LEFT JOIN " + TABLE_NAME_FEED_MEDIA
             + " ON " + TABLE_NAME_FEED_ITEMS + "." + KEY_ID + "=" + TABLE_NAME_FEED_MEDIA + "." + KEY_FEEDITEM + " ";
@@ -492,6 +523,7 @@ public class PodDBAdapter {
         values.put(KEY_FEED_SKIP_ENDING, prefs.getFeedSkipEnding());
         values.put(KEY_EPISODE_NOTIFICATION, prefs.getShowEpisodeNotification());
         values.put(KEY_NEW_EPISODES_ACTION, prefs.getNewEpisodesAction().code);
+        values.put(KEY_FEED_PRIORITY, prefs.getFeedPriority());
         db.update(TABLE_NAME_FEEDS, values, KEY_ID + "=?", new String[]{String.valueOf(prefs.getFeedID())});
     }
 
@@ -1483,6 +1515,61 @@ public class PodDBAdapter {
         db.insert(table, null, values);
     }
 
+    public void insertPodcastHighlight(de.danoeh.antennapod.model.feed.PodcastHighlight highlight) {
+        android.content.ContentValues values = new android.content.ContentValues();
+        values.put(KEY_HIGHLIGHT_FEED_ITEM_ID, highlight.getFeedItemId());
+        values.put(KEY_PODCAST_NAME, highlight.getPodcastName());
+        values.put(KEY_EPISODE_TITLE, highlight.getEpisodeTitle());
+        values.put(KEY_EPISODE_URL, highlight.getEpisodeUrl());
+        values.put(KEY_HIGHLIGHT_IMAGE_URL, highlight.getCoverImageUrl());
+        values.put(KEY_HIGHLIGHT_TEXT, highlight.getText());
+        values.put(KEY_HIGHLIGHT_NOTE, highlight.getNote());
+        values.put(KEY_POSITION_SEC, highlight.getPositionSec());
+        values.put(KEY_CAPTURED_AT, highlight.getCapturedAt());
+        values.put(KEY_SYNCED_READWISE, highlight.getSyncedReadwise());
+        values.put(KEY_SYNCED_ROAM, highlight.getSyncedRoam());
+        long id = db.insert(TABLE_NAME_PODCAST_HIGHLIGHTS, null, values);
+        highlight.setId(id);
+    }
+
+    public Cursor getPodcastHighlightsCursor() {
+        return db.query(TABLE_NAME_PODCAST_HIGHLIGHTS, null, null, null, null, null,
+                KEY_CAPTURED_AT + " DESC");
+    }
+
+    public Cursor getPodcastHighlightCursor(long id) {
+        return db.query(TABLE_NAME_PODCAST_HIGHLIGHTS, null,
+                KEY_ID + "=?", new String[]{String.valueOf(id)}, null, null, null);
+    }
+
+    public void updatePodcastHighlightSyncStatus(long id, int syncedReadwise) {
+        android.content.ContentValues values = new android.content.ContentValues();
+        values.put(KEY_SYNCED_READWISE, syncedReadwise);
+        db.update(TABLE_NAME_PODCAST_HIGHLIGHTS, values, KEY_ID + "=?",
+                new String[]{String.valueOf(id)});
+    }
+
+    public void updatePodcastHighlightRoamSyncStatus(long id, int syncedRoam) {
+        android.content.ContentValues values = new android.content.ContentValues();
+        values.put(KEY_SYNCED_ROAM, syncedRoam);
+        db.update(TABLE_NAME_PODCAST_HIGHLIGHTS, values, KEY_ID + "=?",
+                new String[]{String.valueOf(id)});
+    }
+
+    public void updatePodcastHighlightTextAndNote(long id, String text, String note) {
+        android.content.ContentValues values = new android.content.ContentValues();
+        values.put(KEY_HIGHLIGHT_TEXT, text);
+        values.put(KEY_HIGHLIGHT_NOTE, note);
+        values.put(KEY_SYNCED_READWISE, de.danoeh.antennapod.model.feed.PodcastHighlight.SYNC_PENDING);
+        values.put(KEY_SYNCED_ROAM, de.danoeh.antennapod.model.feed.PodcastHighlight.SYNC_PENDING);
+        db.update(TABLE_NAME_PODCAST_HIGHLIGHTS, values, KEY_ID + "=?",
+                new String[]{String.valueOf(id)});
+    }
+
+    public void deletePodcastHighlight(long id) {
+        db.delete(TABLE_NAME_PODCAST_HIGHLIGHTS, KEY_ID + "=?", new String[]{String.valueOf(id)});
+    }
+
     /**
      * Called when a database corruption happens.
      */
@@ -1529,6 +1616,7 @@ public class PodDBAdapter {
             db.execSQL(CREATE_TABLE_QUEUE);
             db.execSQL(CREATE_TABLE_SIMPLECHAPTERS);
             db.execSQL(CREATE_TABLE_FAVORITES);
+            db.execSQL(CREATE_TABLE_PODCAST_HIGHLIGHTS);
 
             db.execSQL(CREATE_INDEX_FEEDITEMS_FEED);
             db.execSQL(CREATE_INDEX_FEEDITEMS_PUBDATE);

@@ -30,6 +30,8 @@ public class MainPreferencesFragment extends AnimatedPreferenceFragment {
     private static final String PREF_ABOUT = "prefAbout";
     private static final String PREF_NOTIFICATION = "notifications";
     private static final String PREF_CONTRIBUTE = "prefContribute";
+    private static final String PREF_SCREEN_INTEGRATIONS = "prefScreenIntegrations";
+    private static final String PREF_SCREEN_TRANSCRIPTION = "prefScreenTranscription";
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -95,6 +97,14 @@ public class MainPreferencesFragment extends AnimatedPreferenceFragment {
             ((PreferenceActivity) getActivity()).openScreen(R.xml.preferences_notifications);
             return true;
         });
+        findPreference(PREF_SCREEN_INTEGRATIONS).setOnPreferenceClickListener(preference -> {
+            ((PreferenceActivity) getActivity()).openScreen(R.xml.preferences_integrations);
+            return true;
+        });
+        findPreference(PREF_SCREEN_TRANSCRIPTION).setOnPreferenceClickListener(preference -> {
+            ((PreferenceActivity) getActivity()).openScreen(R.xml.preferences_transcription);
+            return true;
+        });
         findPreference(PREF_ABOUT).setOnPreferenceClickListener(
                 preference -> {
                     getParentFragmentManager().beginTransaction()
@@ -151,5 +161,9 @@ public class MainPreferencesFragment extends AnimatedPreferenceFragment {
         config.index(R.xml.preferences_swipe)
                 .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_user_interface))
                 .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_swipe));
+        config.index(R.xml.preferences_integrations)
+                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_integrations));
+        config.index(R.xml.preferences_transcription)
+                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_transcription));
     }
 }

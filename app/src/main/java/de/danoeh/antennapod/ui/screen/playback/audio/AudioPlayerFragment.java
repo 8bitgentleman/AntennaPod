@@ -1,5 +1,6 @@
 package de.danoeh.antennapod.ui.screen.playback.audio;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -40,6 +41,7 @@ import de.danoeh.antennapod.ui.screen.playback.MediaPlayerErrorDialog;
 import de.danoeh.antennapod.ui.screen.playback.PlayButton;
 import de.danoeh.antennapod.ui.screen.playback.SleepTimerDialog;
 import de.danoeh.antennapod.ui.screen.playback.TranscriptDialogFragment;
+import de.danoeh.antennapod.feature.highlight.CaptureBottomSheet;
 import de.danoeh.antennapod.ui.screen.playback.VariableSpeedDialog;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -216,6 +218,10 @@ public class AudioPlayerFragment extends Fragment implements
                         .callEvenIfRunning(true)
                         .start();
             }
+        });
+        butPlay.setOnLongClickListener(v -> {
+            showCaptureSheet();
+            return true;
         });
         butFF.setOnClickListener(v -> {
             if (BuildConfig.USE_MEDIA3_PLAYBACK_SERVICE) {
@@ -514,6 +520,9 @@ public class AudioPlayerFragment extends Fragment implements
             new TranscriptDialogFragment().show(
                     getActivity().getSupportFragmentManager(), TranscriptDialogFragment.TAG);
             return true;
+        } else if (itemId == R.id.capture_item) {
+            showCaptureSheet();
+            return true;
         } else if (itemId == R.id.open_feed_item) {
             if (feedItem != null) {
                 openFeed(feedItem.getFeed());
@@ -521,6 +530,48 @@ public class AudioPlayerFragment extends Fragment implements
             return true;
         }
         return false;
+    }
+
+    private void showCaptureSheet() {
+        if (currentMedia == null) {
+            return;
+        }
+        final @Nullable FeedItem feedItem = (currentMedia instanceof FeedMedia)
+                ? ((FeedMedia) currentMedia).getItem() : null;
+        if (feedItem == null) {
+            return;
+        }
+        final Context captureContext = getContext();
+        if (BuildConfig.USE_MEDIA3_PLAYBACK_SERVICE) {
+            PlaybackController.bindToMedia3Service(getContext(), controller -> {
+                int livePosition = (int) controller.getCurrentPosition();
+                controller.pause();
+                CaptureBottomSheet sheet = CaptureBottomSheet.newInstance(feedItem, livePosition);
+                sheet.setDismissListener(() ->
+                        PlaybackController.bindToMedia3Service(captureContext, MediaController::play));
+                sheet.setOpenIntegrationsListener(() -> openIntegrationsSettings(captureContext));
+                sheet.show(getActivity().getSupportFragmentManager(), CaptureBottomSheet.TAG);
+            });
+        } else {
+            PlaybackController.bindToService(getActivity(), playbackService -> {
+                int livePosition = playbackService.getCurrentPosition();
+                captureContext.sendBroadcast(
+                        MediaButtonStarter.createIntent(captureContext, KeyEvent.KEYCODE_MEDIA_PAUSE));
+                CaptureBottomSheet sheet = CaptureBottomSheet.newInstance(feedItem, livePosition);
+                sheet.setDismissListener(() -> captureContext.sendBroadcast(
+                        MediaButtonStarter.createIntent(captureContext, KeyEvent.KEYCODE_MEDIA_PLAY)));
+                sheet.setOpenIntegrationsListener(() -> openIntegrationsSettings(captureContext));
+                sheet.show(getActivity().getSupportFragmentManager(), CaptureBottomSheet.TAG);
+            });
+        }
+    }
+
+    private void openIntegrationsSettings(Context context) {
+        android.content.Intent intent = new android.content.Intent(context,
+                de.danoeh.antennapod.ui.screen.preferences.PreferenceActivity.class);
+        intent.putExtra(de.danoeh.antennapod.ui.screen.preferences.PreferenceActivity
+                .OPEN_INTEGRATIONS_SETTINGS, true);
+        context.startActivity(intent);
     }
 
     private void openFeed(Feed feed) {

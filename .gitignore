@@ -6,6 +6,7 @@ bin/
 gen/
 target/
 build/
+.cxx/
 **/*.project
 **/*.classpath
 local.properties
@@ -30,3 +31,5 @@ gradle.properties
 .vscode
 .cursor
 *.hprof
+feature/highlight/libs/*.aar
+/inspo

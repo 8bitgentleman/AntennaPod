@@ -987,6 +987,66 @@ public class DBWriter {
         }
     }
 
+    public static java.util.concurrent.Future<?> savePodcastHighlight(de.danoeh.antennapod.model.feed.PodcastHighlight highlight) {
+        return dbExec.submit(() -> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            try {
+                adapter.insertPodcastHighlight(highlight);
+            } finally {
+                adapter.close();
+            }
+        });
+    }
+
+    public static java.util.concurrent.Future<?> updatePodcastHighlightSyncStatus(long id, int syncedReadwise) {
+        return dbExec.submit(() -> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            try {
+                adapter.updatePodcastHighlightSyncStatus(id, syncedReadwise);
+            } finally {
+                adapter.close();
+            }
+        });
+    }
+
+    public static java.util.concurrent.Future<?> updatePodcastHighlightRoamSyncStatus(long id, int syncedRoam) {
+        return dbExec.submit(() -> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            try {
+                adapter.updatePodcastHighlightRoamSyncStatus(id, syncedRoam);
+            } finally {
+                adapter.close();
+            }
+        });
+    }
+
+    public static java.util.concurrent.Future<?> updatePodcastHighlightTextAndNote(long id, String text, String note) {
+        return dbExec.submit(() -> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            try {
+                adapter.updatePodcastHighlightTextAndNote(id, text, note);
+            } finally {
+                adapter.close();
+            }
+        });
+    }
+
+    public static java.util.concurrent.Future<?> deletePodcastHighlight(long id) {
+        return dbExec.submit(() -> {
+            PodDBAdapter adapter = PodDBAdapter.getInstance();
+            adapter.open();
+            try {
+                adapter.deletePodcastHighlight(id);
+            } finally {
+                adapter.close();
+            }
+        });
+    }
+
     /**
      * Submit to the DB thread only if caller is not already on the DB thread. Otherwise,
      * just execute synchronously

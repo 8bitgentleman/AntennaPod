@@ -46,6 +46,18 @@
             android:title="@string/notification_pref_fragment"
             android:icon="@drawable/ic_notifications"/>
 
+    <Preference
+            android:key="prefScreenIntegrations"
+            android:title="@string/pref_screen_integrations_title"
+            android:summary="@string/pref_screen_integrations_sum"
+            android:icon="@drawable/ic_cloud" />
+
+    <Preference
+            android:key="prefScreenTranscription"
+            android:title="@string/pref_screen_transcription_title"
+            android:summary="@string/pref_screen_transcription_sum"
+            android:icon="@drawable/ic_info" />
+
     <PreferenceCategory
             android:key="project"
             android:title="@string/project_pref">
