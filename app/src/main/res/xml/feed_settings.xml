@@ -17,6 +17,11 @@
             android:summary="@string/feed_tags_summary"
             android:title="@string/feed_tags_label" />
 
+        <Preference
+            android:icon="@drawable/ic_tag"
+            android:key="feedPriority"
+            android:title="@string/feed_priority_label" />
+
     </PreferenceCategory>
 
     <PreferenceCategory
