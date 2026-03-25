@@ -69,6 +69,39 @@ New feature modules need `apply from: "../../playFlavor.gradle"` in their `build
 
 ---
 
+## Highlight Feature (`feature/highlight`)
+
+Snipd-like capture: tap a button while listening → transcribe last N seconds on-device → edit → save to local DB and sync to Readwise/Roam.
+
+**Capture flow**
+1. Long-press play button in `AudioPlayerFragment` → `showCaptureSheet()` opens `CaptureBottomSheet`
+2. User adjusts lookback window and taps Transcribe
+3. `HighlightCaptureViewModel` calls `AudioCaptureHelper` to decode the audio segment from the episode file to a WAV
+4. `WhisperTranscriptionService` runs the WAV through Sherpa-ONNX / Moonshine v2 (model lives in app storage, downloaded on first use via `ModelDownloadManager`)
+5. Transcript is shown in the edit sheet (`HighlightEditBottomSheet`); user saves → `DBWriter.addPodcastHighlight()`
+
+**Sync flow**
+- **Readwise**: `ReadwiseSyncService` POSTs to Readwise API v3. Sync is also scheduled as a background `WorkManager` job via `ReadwiseSyncWorker` (retries on failure).
+- **Roam**: `RoamSyncService` POSTs to the Roam Local API. Sync is fire-and-forget from the ViewModel (no worker needed — requires Roam to be running locally).
+
+**Browse**
+`HighlightsFragment` — accessible from the nav drawer. Shows highlights grouped by podcast/episode. Tap any highlight to re-open `HighlightEditBottomSheet` for edits or re-sync.
+
+**Config classes**
+| Class | Stores |
+|---|---|
+| `WhisperPreferences` | Lookback duration, model path |
+| `ReadwisePreferences` | Readwise API token |
+| `RoamPreferences` | Roam API port, graph name |
+
+**DB**
+`PodcastHighlight` model → `podcast_highlights` table in `PodDBAdapter`. `DBUpgrader` handles migration. Read via `DBReader.getPodcastHighlights()`.
+
+**Transcription engine**
+`:feature:sherpa-onnx` is a thin Gradle module that pulls in the `sherpa-onnx-android` AAR. `WhisperTranscriptionService` is the only consumer. Model files (4 × `.onnx`) are downloaded at runtime, not bundled.
+
+---
+
 ## AGENTS.md Rules (enforced)
 
 - No comments in new code
